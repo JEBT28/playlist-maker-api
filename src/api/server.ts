@@ -1,11 +1,10 @@
 import { PlanetScaleDatabase, drizzle } from "drizzle-orm/planetscale-serverless";
-import express from 'express';
-import { connect } from "@planetscale/database";
-import { PLANET_SCALE_CONFIG } from "../../planetscale.configuration";
+import express, { NextFunction } from 'express';
 import { Connect } from "../db/connection";
 import * as schema from '../db/schemas/index';
-import { error } from "console";
 import { NODE_ENV } from "../config/config";
+
+import { Request, Response } from 'express';
 
 export class Server {
     app: express.Application;
@@ -30,7 +29,7 @@ export class Server {
 
     routes() {
 
-        this.app.get('/api/health', (req, res) => {
+        this.app.get('/api/health', (req: Request, res: Response) => {
             res.json({ message: 'Ok', error: false, data: `[${NODE_ENV}] : ${new Date().toISOString()}` });
         })
 
@@ -41,7 +40,7 @@ export class Server {
         this.app.use(express.urlencoded({ extended: false }));
         this.app.use(express.static('public'));
         //Enable cors
-        this.app.use((req, res, next) => {
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
             res.header('Access-Control-Allow-Origin', '*');
             res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
             res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
