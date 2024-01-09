@@ -2,7 +2,7 @@ import { PlanetScaleDatabase, drizzle } from "drizzle-orm/planetscale-serverless
 import express, { NextFunction } from 'express';
 import { Connect } from "../db/connection";
 import * as schema from '../db/schemas/index';
-import { NODE_ENV } from "../config/config";
+import { NODE_ENV, PORT } from "../config/config";
 
 import { Request, Response } from 'express';
 
@@ -13,7 +13,7 @@ export class Server {
 
     constructor() {
         this.app = express();
-        this.port = 3000;
+        this.port = PORT;
         this.db = Connect();
         this.configure();
         this.routes();
