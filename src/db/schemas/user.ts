@@ -13,3 +13,4 @@ export const users = mysqlTable('users', {
 
 export type User = typeof users.$inferSelect; // return type when queried
 export type NewUser = typeof users.$inferInsert; // return type when inserting
+export type UserUpdate = Partial<User>; // return type when updating

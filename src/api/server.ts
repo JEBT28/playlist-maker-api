@@ -1,20 +1,19 @@
-import { PlanetScaleDatabase, drizzle } from "drizzle-orm/planetscale-serverless";
+
 import express, { NextFunction } from 'express';
-import { Connect } from "../db/connection";
-import * as schema from '../db/schemas/index';
-import { NODE_ENV, PORT } from "../config/config";
+import { PORT, SECRETKEY } from "../config/config";
 
 import { Request, Response } from 'express';
+import { expressjwt as jwt } from 'express-jwt';
+import * as ApiRouter from './router';
+import { error } from 'console';
 
 export class Server {
     app: express.Application;
     port: number;
-    db: PlanetScaleDatabase<typeof schema>
 
     constructor() {
         this.app = express();
         this.port = PORT;
-        this.db = Connect();
         this.configure();
         this.routes();
     }
@@ -28,11 +27,28 @@ export class Server {
     }
 
     routes() {
+        const unprotected = ['/api/users/login', '/api/users/register', '/api/health', '/api/home'];
 
-        this.app.get('/api/health', (req: Request, res: Response) => {
-            res.json({ message: 'Ok', error: false, data: `[${NODE_ENV}] : ${new Date().toISOString()}` });
+        this.app.use(jwt({
+            secret: SECRETKEY,
+            algorithms: ['HS256'],
+            requestProperty: 'user',
+
+
+        }).unless({ path: unprotected }))
+
+        // console.log('Api', ApiRouter)
+        this.app.use('/api', ApiRouter.default)
+        this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+            if (err.name === "UnauthorizedError") {
+                res.status(401).send({
+                    error: true,
+                    message: "Unauthorized"
+                });
+            } else {
+                res.status(500).send("Something broke!");
+            }
         })
-
     }
 
     configure() {

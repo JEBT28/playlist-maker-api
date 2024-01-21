@@ -1,5 +1,3 @@
-import { users } from "./user";
+import { users as Users } from "./user";
 
-export default {
-    users: users
-}
+export const users = Users
