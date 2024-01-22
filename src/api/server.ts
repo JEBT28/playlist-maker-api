@@ -46,7 +46,10 @@ export class Server {
                     message: "Unauthorized"
                 });
             } else {
-                res.status(500).send("Something broke!");
+                res.status(500).send({
+                    error: true,
+                    message: err.message
+                });
             }
         })
     }
