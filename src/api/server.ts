@@ -32,7 +32,7 @@ export class Server {
         this.app.use(jwt({
             secret: SECRETKEY,
             algorithms: ['HS256'],
-            requestProperty: 'user',
+            requestProperty: 'userData',
 
 
         }).unless({ path: unprotected }))
